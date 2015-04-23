@@ -88,8 +88,8 @@ class SolidLocaleMiddleware(LocaleMiddleware):
         return no_lang_tag_path
 
     def perform_redirect(self, request, language, permanent=False):
-       # language can be empty string (in case of default language)
-       path_info = request.path_info
+        # language can be empty string (in case of default language)
+        path_info = request.path_info
         full_path = request.get_full_path()
         if not language:
             path_info = self.remove_lang_from_path(path_info)
