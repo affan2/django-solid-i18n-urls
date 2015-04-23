@@ -1,7 +1,7 @@
 from django import VERSION as DJANGO_VERSION
 from django.conf import settings
 from django.core.urlresolvers import get_resolver, is_valid_path
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.utils.cache import patch_vary_headers
 from django.utils import translation as trans
 from django.utils.translation.trans_real import language_code_prefix_re
@@ -23,6 +23,7 @@ class SolidLocaleMiddleware(LocaleMiddleware):
     Default language is set in settings.LANGUAGE_CODE.
     """
     response_redirect_class = HttpResponseRedirect
+    response_permanent_redirect_class = HttpResponsePermanentRedirect
 
     def __init__(self):
         self._is_language_prefix_patterns_used = False
@@ -56,14 +57,14 @@ class SolidLocaleMiddleware(LocaleMiddleware):
         if (getattr(settings, 'SOLID_I18N_DEFAULT_PREFIX_REDIRECT', False)
                 and language_from_path == self.default_lang
                 and self.is_language_prefix_patterns_used()):
-            redirect = self.perform_redirect(request, '')
+            redirect = self.perform_redirect(request, '', getattr(settings, 'SOLID_I18N_USE_PERMANENT_DEFAULT_PREFIX_REDIRECT', False))
             if redirect:
                 return redirect
         elif self.use_redirects:
             if (response.status_code == 404 and not language_from_path
                     and self.is_language_prefix_patterns_used()
                     and language != self.default_lang):
-                redirect = self.perform_redirect(request, language)
+                redirect = self.perform_redirect(request, language, getattr(settings, 'SOLID_I18N_USE_PERMANENT_REDIRECTS', False))
                 if redirect:
                     return redirect
             if not (self.is_language_prefix_patterns_used()
@@ -85,7 +86,7 @@ class SolidLocaleMiddleware(LocaleMiddleware):
                 no_lang_tag_path = '/' + no_lang_tag_path
         return no_lang_tag_path
 
-    def perform_redirect(self, request, language):
+    def perform_redirect(self, request, language, permanent=False):
         path_info = request.path_info
         full_path = request.get_full_path()
         if language:
@@ -107,6 +108,9 @@ class SolidLocaleMiddleware(LocaleMiddleware):
                 scheme = 'https' if request.is_secure() else 'http'
             language_url = "%s://%s%s%s" % (
                 scheme, request.get_host(), language, full_path)
+
+            if permanent:
+                return self.response_permanent_redirect_class(language_url)
             return self.response_redirect_class(language_url)
 
     def is_language_prefix_patterns_used(self):
