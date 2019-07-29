@@ -7,6 +7,9 @@ activate_venv*.bat
 *.egg-info
 dist/
 README.rst
+RELEASE_NOTES.rst
 generate_rst.py
 build/
 .coverage
+.cache
+*.sqlite

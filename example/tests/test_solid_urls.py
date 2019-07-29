@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import sys
+
 from django.core.urlresolvers import reverse
 from django.conf.urls import url
 from django.utils import translation
@@ -133,6 +133,28 @@ class TranslationAccessTestCase(URLTestCaseBase):
 
     # settings
 
+    @override_settings(SOLID_I18N_PREFIX_STRICT=False)
+    def test_about_page_strict_prefix_false(self):
+        response = self.client.get('/my-slug/')
+        self.assertEqual(response._headers.get('content-language')[-1], 'my')
+        response = self.client.get('/ru/slug/')
+        self.assertEqual(response._headers.get('content-language')[-1], 'ru')
+        response = self.client.get('/pt-br/slug/')
+        self.assertEqual(response._headers.get('content-language')[-1], 'pt-br')
+        response = self.client.get('/pt-broughton/slug/')
+        self.assertEqual(response._headers.get('content-language')[-1], 'pt-br')
+
+    @override_settings(SOLID_I18N_PREFIX_STRICT=True)
+    def test_about_page_strict_prefix_true(self):
+        response = self.client.get('/my-slug/')
+        self.assertEqual(response._headers.get('content-language')[-1], 'en')
+        response = self.client.get('/ru/slug/')
+        self.assertEqual(response._headers.get('content-language')[-1], 'ru')
+        response = self.client.get('/pt-br/slug/')
+        self.assertEqual(response._headers.get('content-language')[-1], 'pt-br')
+        response = self.client.get('/pt-broughton/slug/')
+        self.assertEqual(response._headers.get('content-language')[-1], 'en')
+
     @override_settings(SOLID_I18N_HANDLE_DEFAULT_PREFIX=True)
     def test_about_page_default_prefix_en_with_prefix_first(self):
         # with prefix
@@ -198,7 +220,7 @@ class TranslationAccessTestCase(URLTestCaseBase):
     def test_home_page_default_prefix_en_redirect(self):
         with translation.override('en'):
             response = self.client.get('/en/')
-            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response.status_code, 301)
             self.assertTrue('/en/' not in response['Location'])
             response = self.client.get(response['Location'])
             self._base_page_check(response, "en", "home")
@@ -207,7 +229,7 @@ class TranslationAccessTestCase(URLTestCaseBase):
     def test_home_page_default_prefix_ru_redirect(self):
         with translation.override('ru'):
             response = self.client.get('/en/')
-            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response.status_code, 301)
             self.assertTrue('/en/' not in response['Location'])
             response = self.client.get(response['Location'])
             self._base_page_check(response, "en", "home")
@@ -280,7 +302,7 @@ class TranslationAccessTestCase(URLTestCaseBase):
     @override_settings(SOLID_I18N_DEFAULT_PREFIX_REDIRECT=True)
     def test_home_page_prefix_default_prefix_en_redirect(self):
         response = self.client.get('/en/about/', **self.en_http_headers)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 301)
         self.assertTrue('/about/' in response['Location'])
         self.assertFalse('/en/about/' in response['Location'])
         self.assertFalse('/ru/about/' in response['Location'])
@@ -289,7 +311,7 @@ class TranslationAccessTestCase(URLTestCaseBase):
     @override_settings(SOLID_I18N_DEFAULT_PREFIX_REDIRECT=True)
     def test_home_page_prefix_default_prefix_ru_redirect(self):
         response = self.client.get('/en/about/', **self.ru_http_headers)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 301)
         self.assertTrue('/about/' in response['Location'])
         self.assertFalse('/en/about/' in response['Location'])
         self.assertFalse('/ru/about/' in response['Location'])

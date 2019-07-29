@@ -1,18 +1,32 @@
 Django solid_i18n urls
 =====
 
-[![Build Status](https://travis-ci.org/st4lk/django-solid-i18n-urls.png?branch=master)](https://travis-ci.org/st4lk/django-solid-i18n-urls) [![Coverage Status](https://coveralls.io/repos/st4lk/django-solid-i18n-urls/badge.png?branch=master)](https://coveralls.io/r/st4lk/django-solid-i18n-urls?branch=master) [![pypi](https://pypip.in/d/solid_i18n/badge.png)](https://crate.io/packages/solid_i18n/)
+[![Build Status](https://travis-ci.org/st4lk/django-solid-i18n-urls.svg?branch=master)](https://travis-ci.org/st4lk/django-solid-i18n-urls)
+[![Coverage Status](https://coveralls.io/repos/st4lk/django-solid-i18n-urls/badge.svg?branch=master)](https://coveralls.io/r/st4lk/django-solid-i18n-urls?branch=master)
+[![Pypi version](https://img.shields.io/pypi/v/solid_i18n.svg)](https://pypi.python.org/pypi/solid_i18n)
 
 solid_i18n contains middleware and url patterns to use default language at root path (without language prefix).
 
 Default language is set in settings.LANGUAGE_CODE.
 
+Deprecation notice
+------------------
+Starting from [Django 1.10](https://docs.djangoproject.com/en/dev/releases/1.10/#internationalization), built-in `i18n_patterns` accept optional argument `prefix_default_language`. If it is `False`, then Django will serve url without language prefix by itself. Look [docs](https://docs.djangoproject.com/en/dev/topics/i18n/translation/#django.conf.urls.i18n.i18n_patterns) for more details.
+
+This package can still be useful in following cases (look below for settings details):
+- You need `settings.SOLID_I18N_USE_REDIRECTS = True` behaviour
+- You need `settings.SOLID_I18N_HANDLE_DEFAULT_PREFIX = True` behaviour
+- You need `settings.SOLID_I18N_DEFAULT_PREFIX_REDIRECT = True` behaviour
+- You need `settings.SOLID_I18N_PREFIX_STRICT = True` behaviour
+
+In all other cases no need in current package, just use Django>=1.10.
+
 
 Requirements
 -----------
 
-- python (2.6, 2.7, 3.2, 3.3, 3.4)
-- django (1.4, 1.5, 1.6, 1.7, 1.8)
+- python (2.7, 3.4, 3.5)
+- django (1.8, 1.9, 1.10)
 
 Release notes
 -------------
@@ -73,7 +87,7 @@ Quick start
         from django.conf.urls import patterns, include, url
         from solid_i18n.urls import solid_i18n_patterns
 
-        urlpatterns = solid_i18n_patterns('',
+        urlpatterns = solid_i18n_patterns(
             url(r'^about/$', 'about.view', name='about'),
             url(r'^news/', include(news_patterns, namespace='news')),
         )
@@ -93,6 +107,32 @@ Otherwise, `/en/...` will return 404 status_code.
 - `SOLID_I18N_DEFAULT_PREFIX_REDIRECT = False`    
 If `True`, redirect from url with default language prefix to url without any prefix, i.e. redirect from `/en/...` to `/...` if 'en' is default language.
 
+- `SOLID_I18N_PREFIX_STRICT = False`    
+Experimental. If `True`, paths like `/my-slug/` will call your view on that path, if language my-slug doesn't exists (here `my` is supported language).
+
+    Example.
+
+        # settings.py
+        LANGUAGES = (
+            ('en', 'English'),
+            ('my', 'Burmese'),
+        )
+
+        # urls.py
+        urlpatterns = solid_i18n_patterns('',
+            url(r'^my-slug/$', some_view),
+        )
+
+    If `SOLID_I18N_PREFIX_STRICT=False`, then url /my-slug/ will respond with 404, since language `my-slug` is not found.
+    This happens, because we have a registered language tag `my`. Language tag can have form like this:
+
+        language-region
+
+    So django in this case tries to find language 'my-slug'. But it fails and that is why django respond 404.
+    And your view `some_view` will not be called.
+
+    But, if we set `SOLID_I18N_PREFIX_STRICT=True`, then resolve system will get language only from exact 'my' prefix.
+    In case of /my-slug/ url the prefix is not exact, and our `some_view` will be found and called.
 
 Example site
 -----------

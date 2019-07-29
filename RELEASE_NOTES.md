@@ -1,13 +1,62 @@
 solid_i18n release notes
 ========================
 
+v1.4.2
+------
+- Remove requirement for Django < 1.11 in order to use package on Django 1.11.
+
+Issues: [#43](https://github.com/st4lk/django-solid-i18n-urls/issues/43)
+
+
+v1.4.1
+------
+- Fix minor issue with SolidLocaleRegexURLResolver
+
+Issues: [#40](https://github.com/st4lk/django-solid-i18n-urls/issues/40)
+
+
+v1.4.0
+------
+- Add django 1.10 support
+- Add deprecation notice
+
+Issues: [#35](https://github.com/st4lk/django-solid-i18n-urls/issues/35)
+
+v1.3.0
+------
+- Add SOLID_I18N_PREFIX_STRICT setting to handle urls starting with language code
+
+Issues: [#34](https://github.com/st4lk/django-solid-i18n-urls/issues/34)
+
+v1.2.0
+------
+- Add django 1.9 support
+- Drop django 1.4 support
+- Drop python 3.2 support
+- Simplify tox settings
+
+Issues: [#32](https://github.com/st4lk/django-solid-i18n-urls/issues/32), [#23](https://github.com/st4lk/django-solid-i18n-urls/issues/23   ), [#21](https://github.com/st4lk/django-solid-i18n-urls/issues/21)
+
+v1.1.1
+------
+- fix django 1.8 `AppRegistryNotReady("Apps aren't loaded yet.")`
+
+Issues: [#29](https://github.com/st4lk/django-solid-i18n-urls/issues/29)
+
+v1.1.0
+------
+
+ - Use 301 redirect in case of `SOLID_I18N_DEFAULT_PREFIX_REDIRECT`
+ - Upload wheel
+
+Issues: [#24](https://github.com/st4lk/django-solid-i18n-urls/issues/24), [#20](https://github.com/st4lk/django-solid-i18n-urls/issues/20)
+
 v1.0.0
 ------
 
  - Add django 1.8 support
 
-Issues: [#8](https://github.com/st4lk/django-solid-i18n-urls/issues/8)
-Issues: [#19](https://github.com/st4lk/django-solid-i18n-urls/issues/19)
+Issues: [#8](https://github.com/st4lk/django-solid-i18n-urls/issues/8), [#19](https://github.com/st4lk/django-solid-i18n-urls/issues/19)
 
 v0.9.1
 ------
