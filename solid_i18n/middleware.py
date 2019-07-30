@@ -2,7 +2,7 @@ import re
 
 from django import VERSION as DJANGO_VERSION
 from django.conf import settings
-from django.core.urlresolvers import is_valid_path, get_script_prefix
+from django.urls import is_valid_path, get_script_prefix
 from django.http import HttpResponseRedirect, HttpResponsePermanentRedirect
 from django.middleware.locale import LocaleMiddleware
 from django.utils import translation as trans

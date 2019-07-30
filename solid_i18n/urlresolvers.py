@@ -1,8 +1,9 @@
 import re
 from django.utils.translation import get_language
-from django.core.urlresolvers import LocaleRegexURLResolver, clear_url_caches
+from django.urls import clear_url_caches
 from django.conf import settings
 from .memory import get_language_from_path
+from .tbh_urlresolvers import LocaleRegexURLResolver
 
 
 class SolidLocaleRegexURLResolver(LocaleRegexURLResolver):

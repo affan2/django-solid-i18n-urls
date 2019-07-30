@@ -1,18 +1,8 @@
 import sys
-try:
-    from importlib import import_module
-except ImportError:
-    from django.utils.importlib import import_module
-try:
-    from importlib import reload  # builtin reload deprecated since version 3.4
-except ImportError:
-    try:
-        from imp import reload
-    except ImportError:
-        pass
+from importlib import import_module, reload
 from django.conf import settings
 from django.test import TestCase
-from django.core.urlresolvers import clear_url_caches
+from django.urls import clear_url_caches
 from django.utils import translation
 try:
     from django.test.utils import TransRealMixin
