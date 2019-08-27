@@ -5,7 +5,7 @@ RegexURLResolver is the main class here. Its resolve() method takes a URL (as
 a string) and returns a ResolverMatch object which provides access to all
 attributes of the resolved URL match.
 """
-
+from __future__ import unicode_literals
 
 import functools
 import re
