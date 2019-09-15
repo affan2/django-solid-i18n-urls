@@ -20,9 +20,9 @@ def solid_i18n_patterns(prefix, *args):
         from django.conf.urls import patterns
         warnings.warn(
             "Calling solid_i18n_patterns() with the `prefix` argument and with "
-            "tuples instead of django.conf.urls.url() instances is deprecated and "
+            "tuples instead of django.conf.urls.re_path)) instances is deprecated and "
             "will no longer work in Django 2.0. Use a list of "
-            "django.conf.urls.url() instances instead.",
+            "django.conf.urls.re_path)) instances instead.",
             PendingDeprecationWarning, stacklevel=2
         )
         pattern_list = patterns(prefix, *args)
